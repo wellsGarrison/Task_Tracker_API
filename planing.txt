@@ -1,0 +1,38 @@
+TODO:
+    move schemas and class definitions into one file 
+
+operations 
+    add
+        POST
+    update 
+        PUT
+    delete 
+        DELETE
+    mark
+        PUT
+    list
+        GET
+
+
+server side
+    parts: 
+        provide api
+
+        database management 
+
+    steps: 
+        receive request 
+
+        CRUD operations 
+
+        return info 
+
+
+
+client side
+    steps: 
+        take user input 
+
+        make api requests 
+
+        display results 
