@@ -17,7 +17,17 @@ class DataHandler:
         except psycopg2.Error as e:
             print(f"Error connecting to PostgreSQL: {e}")
 
-        
+    def createAccount(self, name, email, hash):
+        # check email is unqiue 
+        self.cur.execute("""
+                         SELECT * FROM 
+                         USERS 
+                         WHERE email = %s
+                         """, 
+                         email)
+        # store new user in User table 
+        # return token on success, error otherwise 
+        return None
 
     def addTask(self, description):
         # print(task['description'])

@@ -1,7 +1,26 @@
 # import json
 # from jsonschema import validate, ValidationError
 
-create_task_schema = {
+user_registration = {
+    "type": "object",
+    "properties": {
+        "name": {"type": "string"},
+        "email": {"type": "string"},
+        "password": {"type": "string"}
+    },
+    "required": ["name", "email", "password"]
+}
+
+user_login = {
+    "type": "object",
+    "properties": {
+        "email": {"type": "string"},
+        "password": {"type": "string"}
+    },
+    "required": ["email", "password"]
+}
+
+create_task = {
     "type": "object",
     "properties": {
         "description": {"type": "string"}
@@ -11,7 +30,7 @@ create_task_schema = {
     "required": ["description"]
 }
 
-update_task_schema = {
+update_task = {
     "type": "object",
     "properties": {
         "id": {"type": "number"},
@@ -20,7 +39,7 @@ update_task_schema = {
     "required": ["id", "description"]
 }
 
-delete_task_schema = {
+delete_task = {
     "type": "object",
     "properties": {
         "id": {"type": "number"}
@@ -28,7 +47,7 @@ delete_task_schema = {
     "required": ["id"]
 }
 
-mark_task_schema = {
+mark_task = {
     "type": "object",
     "properties": {
         "id": {"type": "number"},
@@ -37,7 +56,7 @@ mark_task_schema = {
     "required": ["id", "status"]
 }
 
-list_task_schema = {
+list_task = {
     "type": "object",
     "properties": {
         "status": {"type": "string"},

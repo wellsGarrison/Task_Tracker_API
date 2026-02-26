@@ -36,3 +36,25 @@ client side
         make api requests 
 
         display results 
+
+
+Database design:
+    Tables:
+        Users:
+            user_id PK
+            name 
+            email UNIQUE 
+            salt
+            hash 
+            auth_token 
+            auth_token_expiration 
+            # add update token later
+            
+        Tasks 
+            task_id PK 
+            x- user_task_id UNIQUE(user_task_id, user_id) -x
+            user_id references Users FK
+            description
+            status
+            created_at
+            updated_at
