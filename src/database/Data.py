@@ -17,54 +17,153 @@ class DataHandler:
         except psycopg2.Error as e:
             print(f"Error connecting to PostgreSQL: {e}")
 
-    def createAccount(self, name, email, hash):
+    def create_account(self, name, email, hash, user_id):
         # check email is unqiue 
-        self.cur.execute("""
-                         SELECT * FROM 
-                         USERS 
-                         WHERE email = %s
-                         """, 
-                         email)
+        # self.cur.execute("""
+        #                  SELECT * FROM 
+        #                  USERS 
+        #                  WHERE email = %s
+        #                  """, 
+        #                  email)
+        # rows = self.cur.fetchall()
+        # if len(rows) > 1:
+        #     raise Exception("A user with that email already exist") 
         # store new user in User table 
         # return token on success, error otherwise 
+        try:
+            self.cur.execute("""
+                            INSERT INTO users (name, email, hash, user_id)
+                            VALUES (%s, %s, %s, %s)
+                            """,
+                            (name, email, hash, user_id))
+            self.conn.commit()
+        except psycopg2.DatabaseError as e:
+            self.conn.commit()
+            raise
         return None
-
-    def addTask(self, description):
-        # print(task['description'])
-
+    
+    def get_hash(self, email):
+        try:
+            self.cur.execute("""
+                            SELECT hash FROM users 
+                            WHERE email = %s
+                            """,
+                            (email, ))
+            # self.conn.commit()
+            row = self.cur.fetchone()
+        except Exception as e:
+            raise
+        if row:
+            return row[0]
+    
+    def get_user_id(self, email):
+        try:
+            self.cur.execute("""
+                            SELECT user_id FROM users 
+                            WHERE email = %s
+                            """,
+                            (email, ))
+            # self.conn.commit()
+            row = self.cur.fetchone()
+        except Exception as e:
+            raise
+        if row:
+            return row[0]
+    
+    def set_password_hash_for_user(self, user_id, hash):
         self.cur.execute("""
-                        INSERT INTO tasks (description, status, created_at, updated_at)
-                        VALUES (%s, %s, %s, %s)
-                         """,
-                         (description, Status.TODO.name, datetime.now(), datetime.now()))
+                         UPDATE TABLE users 
+                         SET hash = %s
+                         WHERE user_id = %s
+                        """,
+                        (hash, user_id))
         self.conn.commit()
 
-    def getTasks(self, status, page, limit):
-        firstIndex = (page - 1)*limit + 1 # 1-indexed id in table 
+    def add_task(self, user_id, task_id, title, description):
+        # print(task['description'])
+        try:
+            self.cur.execute("""
+                            INSERT INTO tasks (task_id, user_id, title, description, status, created_at, updated_at)
+                            VALUES (%s, %s, %s, %s, %s, now(), now())
+                            """,
+                            (task_id, user_id, title, description, Status.TODO.name))
+            self.conn.commit()
+        except psycopg2.DatabaseError as e:
+            raise
+
+    def change_status(self, user_id, task_id, status):
+        try:
+            self.cur.execute("""
+                             UPDATE tasks
+                             SET status=%s, updated_at=now()
+                             WHERE user_id=%s and task_id=%s
+                             """,
+                             (status, user_id, task_id))
+        except psycopg2.DatabaseError as e:
+            raise
+
+        self.conn.commit()
+        return self.cur.rowcount   
+
+    def change_task(self, user_id, task_id, title, description):
+        try:
+            self.cur.execute("""
+                             UPDATE tasks
+                             SET title=%s, description=%s, updated_at=now()
+                             WHERE user_id=%s and task_id=%s
+                             """,
+                             (title, description, user_id, task_id))
+        except psycopg2.DatabaseError as e:
+            raise
+
+        self.conn.commit()
+        return self.cur.rowcount   
+
+    def delete_task(self, user_id, task_id):
+        try:
+            self.cur.execute("""
+                             DELETE FROM tasks
+                             WHERE user_id=%s and task_id=%s
+                             """,
+                             (user_id, task_id))
+        except psycopg2.DatabaseError as e:
+            raise
+
+        self.conn.commit()
+        return self.cur.rowcount  
+
+
+    def get_tasks(self, user_id, status, page, limit):
+        offset = (page - 1)*limit # 1-indexed id in table 
         if status:
             self.cur.execute("""
-                            SELECT * 
+                            SELECT task_id, title, description, status, created_at, updated_at 
                              FROM tasks
-                             WHERE status = %s AND id >= %s AND id < %s
+                             WHERE user_id = %s AND status = %s
+                             LIMIT %s
+                             OFFSET %s
                             """,
-                            (status, firstIndex, firstIndex + limit)
+                            (user_id, status, limit, offset)
                             )
         else:
             self.cur.execute("""
-                            SELECT * 
+                            SELECT task_id, title, description, status, created_at, updated_at 
                              FROM tasks
-                             WHERE id >= %s AND id < %s
+                             WHERE user_id = %s
+                             LIMIT %s
+                             OFFSET %s
                             """,
-                            ( firstIndex, firstIndex + limit)
+                            (user_id, limit, offset)
                             )
         rows = self.cur.fetchall()
         data = [
             {
                 "id": row[0], 
-                "description": row[1],
-                "status": row[2],
-                "createdAt": row[3],
-                "updatedAt": row[4]
+                "title": row[1],
+                "description": row[2],
+                "status": row[3],
+                "created_at": row[4],
+                "updated_at": row[5]
             } 
                 for row in rows]
         return {"data": data, "page": page, "limit": limit, "total": len(data)}

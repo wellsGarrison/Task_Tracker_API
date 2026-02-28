@@ -23,45 +23,48 @@ user_login = {
 create_task = {
     "type": "object",
     "properties": {
+        "title": {"type": "string"},
         "description": {"type": "string"}
         # "age": {"type": "number"},
         # "email": {"type": "string", "format": "email"}
     },
-    "required": ["description"]
+    "required": ["title", "description"]
 }
 
 update_task = {
     "type": "object",
     "properties": {
-        "id": {"type": "number"},
-        "description": {"type": "string"}
-    },
-    "required": ["id", "description"]
-}
-
-delete_task = {
-    "type": "object",
-    "properties": {
-        "id": {"type": "number"}
-    },
-    "required": ["id"]
-}
-
-mark_task = {
-    "type": "object",
-    "properties": {
-        "id": {"type": "number"},
+        # "id": {"type": "number"},
+        "title": {"type": "string"},
+        "description": {"type": "string"},
         "status": {"type": "string"}
-    },
-    "required": ["id", "status"]
+    }
+    # "required": ["id"]
 }
 
-list_task = {
-    "type": "object",
-    "properties": {
-        "status": {"type": "string"},
-        "page": {"type": "number"},
-        "limit": {"type": "number"}
-    },
-    "required": ["page", "limit"]
-}
+# delete_task = {
+#     "type": "object",
+#     "properties": {
+#         "id": {"type": "number"}
+#     },
+#     "required": ["id"]
+# }
+
+# mark_task = {
+#     "type": "object",
+#     "properties": {
+#         "id": {"type": "number"},
+#         "status": {"type": "string"}
+#     },
+#     "required": ["id", "status"]
+# }
+
+# list_task = {
+#     "type": "object",
+#     "properties": {
+#         "status": {"type": "string"},
+#         "page": {"type": "number"},
+#         "limit": {"type": "number"}
+#     },
+#     "required": ["page", "limit"]
+# }

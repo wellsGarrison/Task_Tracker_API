@@ -41,20 +41,21 @@ client side
 Database design:
     Tables:
         Users:
-            user_id PK
+            user_id text PK
             name 
             email UNIQUE 
-            salt
             hash 
-            auth_token 
-            auth_token_expiration 
-            # add update token later
             
         Tasks 
             task_id PK 
-            x- user_task_id UNIQUE(user_task_id, user_id) -x
             user_id references Users FK
+            title
             description
             status
             created_at
             updated_at
+
+
+tests: 
+    does Data.get_tasks fail when there are no tasks or does it return an empty list
+    

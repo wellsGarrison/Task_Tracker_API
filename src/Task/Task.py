@@ -7,7 +7,7 @@ class Status(Enum):
     INPROGRESS = 2
     DONE = 3
 
-print(type(Status.TODO))
+# print(type(Status.TODO))
 
 class Task:
     def __init__(self, id, desription, status: Status, createdAt, updatedAt) -> None:
