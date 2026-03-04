@@ -10,6 +10,7 @@ Future additions:
  - Redis cache for revoked tokens 
  - Move some logic into separate directories and files. For example a directory for routes and separate files for user and todo list functions. 
  - Change encryption scheme to RS256
+ - refresh tokens 
 
 
 

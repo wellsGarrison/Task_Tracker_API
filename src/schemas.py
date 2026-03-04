@@ -1,5 +1,4 @@
-# import json
-# from jsonschema import validate, ValidationError
+# JSON schemas for validating provided data. 
 
 user_registration = {
     "type": "object",
@@ -25,8 +24,6 @@ create_task = {
     "properties": {
         "title": {"type": "string"},
         "description": {"type": "string"}
-        # "age": {"type": "number"},
-        # "email": {"type": "string", "format": "email"}
     },
     "required": ["title", "description"]
 }
@@ -34,37 +31,8 @@ create_task = {
 update_task = {
     "type": "object",
     "properties": {
-        # "id": {"type": "number"},
         "title": {"type": "string"},
         "description": {"type": "string"},
         "status": {"type": "string"}
     }
-    # "required": ["id"]
 }
-
-# delete_task = {
-#     "type": "object",
-#     "properties": {
-#         "id": {"type": "number"}
-#     },
-#     "required": ["id"]
-# }
-
-# mark_task = {
-#     "type": "object",
-#     "properties": {
-#         "id": {"type": "number"},
-#         "status": {"type": "string"}
-#     },
-#     "required": ["id", "status"]
-# }
-
-# list_task = {
-#     "type": "object",
-#     "properties": {
-#         "status": {"type": "string"},
-#         "page": {"type": "number"},
-#         "limit": {"type": "number"}
-#     },
-#     "required": ["page", "limit"]
-# }
