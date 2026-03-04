@@ -1,16 +1,22 @@
 import psycopg2
 from Task.Task import Task, Status
 from datetime import datetime
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 class DataHandler:
     def __init__(self) -> None:
+        # secret = os.getenv('db_user')
+        # print(secret)
         try:
             self.conn = psycopg2.connect(
-                dbname="task_tracker_db",
-                user="postgres",
-                password="",
-                host="localhost",
-                port="5432"
+                dbname=os.getenv('db_name'),
+                user=os.getenv('db_user'),
+                password=os.getenv('db_password'),
+                host=os.getenv('db_host'),
+                port=os.getenv('db_port')
             )
             self.cur = self.conn.cursor()
             print("Connected to PostgreSQL successfully!")
