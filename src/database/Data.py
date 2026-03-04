@@ -8,8 +8,7 @@ load_dotenv()
 
 class DataHandler:
     def __init__(self) -> None:
-        # secret = os.getenv('db_user')
-        # print(secret)
+        # set up PostgreSQL connection 
         try:
             self.conn = psycopg2.connect(
                 dbname=os.getenv('db_name'),
@@ -23,19 +22,9 @@ class DataHandler:
         except psycopg2.Error as e:
             print(f"Error connecting to PostgreSQL: {e}")
 
+    # register new user in database, email must be unqiue 
     def create_account(self, name, email, hash, user_id):
-        # check email is unqiue 
-        # self.cur.execute("""
-        #                  SELECT * FROM 
-        #                  USERS 
-        #                  WHERE email = %s
-        #                  """, 
-        #                  email)
-        # rows = self.cur.fetchall()
-        # if len(rows) > 1:
-        #     raise Exception("A user with that email already exist") 
-        # store new user in User table 
-        # return token on success, error otherwise 
+
         try:
             self.cur.execute("""
                             INSERT INTO users (name, email, hash, user_id)
@@ -48,6 +37,7 @@ class DataHandler:
             raise
         return None
     
+    # get a user's hash 
     def get_hash(self, email):
         try:
             self.cur.execute("""
@@ -62,6 +52,7 @@ class DataHandler:
         if row:
             return row[0]
     
+    # get a user's user_id
     def get_user_id(self, email):
         try:
             self.cur.execute("""
@@ -76,6 +67,7 @@ class DataHandler:
         if row:
             return row[0]
     
+    # set a new hash for a user
     def set_password_hash_for_user(self, user_id, hash):
         self.cur.execute("""
                          UPDATE TABLE users 
@@ -85,6 +77,7 @@ class DataHandler:
                         (hash, user_id))
         self.conn.commit()
 
+    # add a new task for a given user
     def add_task(self, user_id, task_id, title, description):
         # print(task['description'])
         try:
@@ -97,6 +90,7 @@ class DataHandler:
         except psycopg2.DatabaseError as e:
             raise
 
+    # change a task's status 
     def change_status(self, user_id, task_id, status):
         try:
             self.cur.execute("""
@@ -111,6 +105,7 @@ class DataHandler:
         self.conn.commit()
         return self.cur.rowcount   
 
+    # change a task's title and decription 
     def change_task(self, user_id, task_id, title, description):
         try:
             self.cur.execute("""
@@ -125,6 +120,7 @@ class DataHandler:
         self.conn.commit()
         return self.cur.rowcount   
 
+    # delete a task
     def delete_task(self, user_id, task_id):
         try:
             self.cur.execute("""
@@ -138,9 +134,9 @@ class DataHandler:
         self.conn.commit()
         return self.cur.rowcount  
 
-
+    # get a list of tasks for a user based on page and limit with an optional status filter 
     def get_tasks(self, user_id, status, page, limit):
-        offset = (page - 1)*limit # 1-indexed id in table 
+        offset = (page - 1)*limit # page is 1-indexed but offset is 0-indexed 
         if status:
             self.cur.execute("""
                             SELECT task_id, title, description, status, created_at, updated_at 
