@@ -1,1 +1,6 @@
 .env
+.ssh
+.python-version
+planning.txt
+scratch.txt
+scratchpad.py
