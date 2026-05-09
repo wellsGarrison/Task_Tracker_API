@@ -14,12 +14,22 @@ from jwt.exceptions import ExpiredSignatureError
 from functools import wraps
 import config
 from Task.Task import Status
+from pathlib import Path
 
 
 app = Flask(__name__)
 dh = None
 ph = None
+# print(load_dotenv())
+# Construct the path to the parent directory's .env file
+
+# env_path = Path(__file__).resolve().parent.parent / '.env'
+# print(env_path)
+# load_dotenv(dotenv_path=env_path)
 load_dotenv()
+
+# print(os.getenv('DB_NAME'))
+
 
 # Wrapper for validating session tokens 
 def token_required(f):
@@ -252,6 +262,7 @@ def get_tasks():
 if __name__ == "__main__":
     dh = DataHandler()
     ph = PasswordHasher()
-    app.run(port= 5000, debug=True)
+    # print("HELLLO WORLD")
+    app.run(host="0.0.0.0", port= 8000, debug=True)
     dh.close()
     

@@ -4,21 +4,47 @@ from datetime import datetime
 import os
 from dotenv import load_dotenv
 
-load_dotenv()
+# try removing this
+# load_dotenv()
 
 class DataHandler:
     def __init__(self) -> None:
         # set up PostgreSQL connection 
+        # print(os.getenv('DB_NAME'))
+
         try:
             self.conn = psycopg2.connect(
-                dbname=os.getenv('db_name'),
-                user=os.getenv('db_user'),
-                password=os.getenv('db_password'),
-                host=os.getenv('db_host'),
-                port=os.getenv('db_port')
+                dbname=os.getenv('DB_NAME'),
+                user=os.getenv('DB_USER'),
+                password=os.getenv('DB_PASSWORD'),
+                host=os.getenv('DB_HOST'),
+                port=os.getenv('DB_PORT')
             )
             self.cur = self.conn.cursor()
             print("Connected to PostgreSQL successfully!")
+            self.cur.execute("""
+                            CREATE TABLE IF NOT EXISTS users (
+                                name text,
+                                email text UNIQUE,
+                                hash text,
+                                user_id uuid PRIMARY KEY
+                            );
+                            """)
+
+            self.cur.execute("""
+                             CREATE TABLE IF NOT EXISTS tasks (
+                                description text,
+                                status character varying(10),
+                                created_at timestamp with time zone,
+                                updated_at timestamp with time zone,
+                                user_id uuid REFERENCES users ON DELETE CASCADE,
+                                title text,
+                                task_id uuid PRIMARY KEY
+                             );
+                             """)
+            self.conn.commit()
+            # print("Connected to PostgreSQL successfully!")
+
         except psycopg2.Error as e:
             print(f"Error connecting to PostgreSQL: {e}")
 
