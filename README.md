@@ -6,6 +6,8 @@ Provides user registration, login, and authentication through JWT tokens. CRUD o
 
 Built with Flask and psycopg2. Additional libraries such as Argon2, PyJWT, jsonschema used for user authentication, data validation, etc. 
 
+Updated to run within Docker containers, both server and database run in Docker containers using docker compose from the root directory. To create the Postgres container you will need a password.txt file in the db directory. 
+
 Future additions: 
  - Redis cache for revoked tokens 
  - Move some logic into separate directories and files. For example a directory for routes and separate files for user and todo list functions. 
